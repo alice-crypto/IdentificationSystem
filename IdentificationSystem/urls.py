@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework import routers
 from IdentitySystem.views import IdentityCardViewSet, PersonViewSet, AuthorityCardViewSet, RegionViewSet, \
     DepartmentViewSet, BoroughViewSet, DepartmentByRegionViewSet, BoroughByDepartmentViewSet, \
-    IdentityCardByAuthorityViewSet, PersonByPlaceOfBirthViewSet
+    IdentityCardByAuthorityViewSet, PersonByPlaceOfBirthViewSet, PersonByIdentityCardViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -36,6 +36,8 @@ router.register(r'authorities/(?P<authority_id>\d+)/identity_cards', IdentityCar
                 basename='identity_card_by_authority')
 router.register(r'persons/(?P<place_of_birth>\d+)/boroughs', PersonByPlaceOfBirthViewSet,
                 basename='Persons_by_place_of_birth')
+router.register(r'persons/(?P<identity_card_id>\d+)/identity-cards', PersonByIdentityCardViewSet,
+                basename='Persons_by_identity_card')
 
 schema_view = get_schema_view(
     openapi.Info(

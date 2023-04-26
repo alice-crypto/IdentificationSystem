@@ -74,3 +74,14 @@ class PersonByPlaceOfBirthViewSet(viewsets.ReadOnlyModelViewSet):
         if place_of_birth is None:
             return Response({'msg': "Need Place of birth"}, status=status.HTTP_400_BAD_REQUEST)
         return Borough.objects.filter(place_of_birth_id=place_of_birth)
+
+
+class PersonByIdentityCardViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = IdentityCardSerializer
+
+    def get_queryset(self):
+        try:
+            identity_card = self.kwargs.get('identity_card_id')
+            return Person.objects.filter(fk_identity_card_id=identity_card)
+        except IdentityCard.DoesNotExist:
+            return Response({'message': 'Identity card not found'}, status=status.HTTP_404_NOT_FOUND)

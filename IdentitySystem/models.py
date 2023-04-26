@@ -41,4 +41,4 @@ class Person(models.Model):
     photo = models.ImageField()
     father_name = models.CharField(max_length=255)
     mother_name = models.CharField(max_length=255)
-    fk_identity_card = models.OneToOneField(IdentityCard, on_delete=models.CASCADE, null=True)
+    fk_identity_card = models.OneToOneField(IdentityCard, on_delete=models.CASCADE, blank=True, null=True)
