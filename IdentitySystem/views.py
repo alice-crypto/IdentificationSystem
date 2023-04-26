@@ -64,3 +64,13 @@ class IdentityCardByAuthorityViewSet(viewsets.ReadOnlyModelViewSet):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
+
+
+class PersonByPlaceOfBirthViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = BoroughSerializer
+
+    def get_queryset(self):
+        place_of_birth = self.kwargs.get('place_of_birth')
+        if place_of_birth is None:
+            return Response({'msg': "Need Place of birth"}, status=status.HTTP_400_BAD_REQUEST)
+        return Borough.objects.filter(place_of_birth_id=place_of_birth)
