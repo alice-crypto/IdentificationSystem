@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'IdentificationSystem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'IDS1',
+        'NAME': 'IDS',
         'USER': 'postgres',
         'PASSWORD': 'alice',
         'HOST': 'localhost'
