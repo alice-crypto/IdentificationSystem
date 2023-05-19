@@ -1,18 +1,17 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 from drf_yasg import openapi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import IdentityCard, Person, Authority, Region, Department, Borough, User
 from .serializers import IdentityCardSerializer, PersonSerializer, AuthoritySerializer, RegionSerializer, \
-    DepartmentSerializer, BoroughSerializer, UserSerializer, LoginSerializer, TokenSerializer
+    DepartmentSerializer, BoroughSerializer, UserSerializer, LoginSerializer
 
 
 class AuthorityCardViewSet(viewsets.ModelViewSet):
@@ -144,7 +143,9 @@ class AuthViewSet(GenericViewSet):
         # ...
 
         # Generate the JWT token for the user
-        refresh = RefreshToken.for_user(user)
+        this_user = User.objects.filter(email=email).first()
+        refresh = RefreshToken()
+        refresh['user_id'] = this_user.id
         token = {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
