@@ -6,7 +6,7 @@ class IdentitysystemConfig(AppConfig):
     name = 'IdentitySystem'
 
     def ready(self):
-        from .models import Region, Department
+        from .models import Region, Department, Borough
         if Region.objects.count() == 0:
             Region.objects.create(
                 name='CENTRE'
@@ -270,6 +270,35 @@ class IdentitysystemConfig(AppConfig):
             Department.objects.create(
                 name='Ndian',
                 fk_region_id=10
+            )
+        if Borough.objects.count() == 0:
+            Borough.objects.create(
+                name='Yaoundé 1',
+                fk_department_id=7
+            )
+            Borough.objects.create(
+                name='Yaoundé 2',
+                fk_department_id=7
+            )
+            Borough.objects.create(
+                name='Yaoundé 3',
+                fk_department_id=7
+            )
+            Borough.objects.create(
+                name='Yaoundé 4',
+                fk_department_id=7
+            )
+            Borough.objects.create(
+                name='Yaoundé 5',
+                fk_department_id=7
+            )
+            Borough.objects.create(
+                name='Yaoundé 6',
+                fk_department_id =7
+            )
+            Borough.objects.create(
+                name='Yaoundé 7',
+                fk_department_id =7
             )
 
 
