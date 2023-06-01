@@ -1,13 +1,22 @@
 from abc import ABC
 from django.contrib.auth import authenticate
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import IdentityCard, Person, Authority, Region, Department, Borough, User
+from .models import IdentityCard, Person, Authority, Region, Department, Borough, User, WantedPoster, Commissariat
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64FileField
+from drf_yasg import openapi
 
 
 class AuthoritySerializer(serializers.ModelSerializer):
     class Meta:
         model = Authority
+        fields = '__all__'
+
+
+class CommissariatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Commissariat
         fields = '__all__'
 
 
@@ -41,14 +50,31 @@ class IdentityCardSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class WantedPosterSerializer(serializers.ModelSerializer):
+    commissariats = CommissariatSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = WantedPoster
+        fields = '__all__'
+
+
 class PersonSerializer(serializers.ModelSerializer):
     fk_identity_card = IdentityCardSerializer()
     place_of_birth = BoroughSerializer(many=True, read_only=True)
-    photo = serializers.FileField(required=False)
 
     class Meta:
         model = Person
         fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['photo'] = instance.photo.decode('utf-8')
+        return representation
+
+    def to_internal_value(self, data):
+        if isinstance(data.get('photo'), str):
+            data['photo'] = data['photo'].encode('utf-8')
+        return super().to_internal_value(data)
 
 
 class UserSerializer(serializers.ModelSerializer):

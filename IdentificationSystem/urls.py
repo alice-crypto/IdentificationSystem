@@ -21,17 +21,22 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from IdentitySystem.views import IdentityCardViewSet, PersonViewSet, AuthorityCardViewSet, RegionViewSet, \
     DepartmentViewSet, BoroughViewSet, DepartmentByRegionViewSet, BoroughByDepartmentViewSet, \
-    IdentityCardByAuthorityViewSet, PersonByPlaceOfBirthViewSet, PersonByIdentityCardViewSet, RegisterView, AuthViewSet
+    IdentityCardByAuthorityViewSet, PersonByPlaceOfBirthViewSet, PersonByIdentityCardViewSet, RegisterView, AuthViewSet, \
+    WantedPosterViewSet, CommissariatViewSet, WantedPosterByCommissariatViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 router = routers.DefaultRouter()
 router.register(r'identity-cards', IdentityCardViewSet)
+router.register(r'wanted-poster', WantedPosterViewSet)
 router.register(r'persons', PersonViewSet)
-router.register(r'authorities', AuthorityCardViewSet)
+router.register(r'authorities', AuthorityCardViewSet),
+router.register(r'commissariat', CommissariatViewSet)
 router.register(r'regions', RegionViewSet)
 router.register(r'departments', DepartmentViewSet)
 router.register(r'boroughs', BoroughViewSet)
+router.register(r'commissariat/(?P<commissariat_id>\d+)/wanted-poster', WantedPosterByCommissariatViewSet,
+                basename='wanted-poster_by_commissariat')
 router.register(r'regions/(?P<region_id>\d+)/departments', DepartmentByRegionViewSet, basename='departments_by_region')
 router.register(r'departments/(?P<department_id>\d+)/boroughs', BoroughByDepartmentViewSet, basename='borough_by_region'
                 )
@@ -59,4 +64,5 @@ urlpatterns = [
     path('router/', include(router.urls)),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('admin/', admin.site.urls),
 ]

@@ -1,7 +1,5 @@
 from django.contrib.auth import logout
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
-from drf_yasg import openapi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,15 +7,20 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import IdentityCard, Person, Authority, Region, Department, Borough, User
+from .models import IdentityCard, Person, Authority, Region, Department, Borough, User, WantedPoster, Commissariat
 from .serializers import IdentityCardSerializer, PersonSerializer, AuthoritySerializer, RegionSerializer, \
-    DepartmentSerializer, BoroughSerializer, UserSerializer, LoginSerializer
+    DepartmentSerializer, BoroughSerializer, UserSerializer, LoginSerializer, WantedPosterSerializer, \
+    CommissariatSerializer
 
 
 class AuthorityCardViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
     queryset = Authority.objects.all()
     serializer_class = AuthoritySerializer
+
+
+class CommissariatViewSet(viewsets.ModelViewSet):
+    queryset = Commissariat.objects.all()
+    serializer_class = CommissariatSerializer
 
 
 class RegionViewSet(viewsets.ModelViewSet):
@@ -60,6 +63,11 @@ class IdentityCardViewSet(viewsets.ModelViewSet):
     serializer_class = IdentityCardSerializer
 
 
+class WantedPosterViewSet(viewsets.ModelViewSet):
+    queryset = WantedPoster.objects.all()
+    serializer_class = WantedPosterSerializer
+
+
 class IdentityCardByAuthorityViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IdentityCardSerializer
 
@@ -74,17 +82,21 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
 
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type='object',
-        properties={
-            'photo': openapi.Schema(type='string', format='binary'),
-        }
-    ))
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class WantedPosterByCommissariatViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = WantedPosterSerializer
+
+    def get_queryset(self):
+        commissariat_id = self.kwargs.get('commissariat_id')
+        if commissariat_id is None:
+            return Response({'msg': "Need authority Id"}, status=status.HTTP_400_BAD_REQUEST)
+        return Commissariat.objects.filter(fk_authority_id=commissariat_id)
 
 
 class PersonByPlaceOfBirthViewSet(viewsets.ReadOnlyModelViewSet):
