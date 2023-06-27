@@ -92,6 +92,7 @@ class WantedPosterViewSet(viewsets.ModelViewSet):
     search_fields = ['surname', 'given_name']
 
 
+
 class IdentityCardByAuthorityViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IdentityCardSerializer
 
