@@ -3,7 +3,7 @@ name: Django REST Build and Deploy
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build:
