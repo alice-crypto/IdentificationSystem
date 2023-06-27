@@ -39,9 +39,16 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'IdentitySystem',
+    'django_filters',
     'drf_yasg',
     'corsheaders'
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter'
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -120,8 +127,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/'
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent
+APPS_DIR = ROOT_DIR
+MEDIA_ROOT = str(APPS_DIR)
 CORS_ORIGIN_ALLOW_ALL = True
-
+CORS_ALLOW_METHODS = [
+    'DELETE',  # Ajoutez cette ligne pour autoriser la méthode DELETE
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOWED_ORIGINS = ['http://*']
+CORS_ALLOW_HEADERS = [
+    "hash",
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

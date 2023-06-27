@@ -70,7 +70,8 @@ class WantedPoster(models.Model):
     place_of_birth = models.ForeignKey(Borough, on_delete=models.CASCADE, blank=True, null=True)
     gender = models.IntegerField(choices=Gender.choices, blank=True, null=True)
     Height = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
-    photos = models.BinaryField(null=True)
+    photos = models.ImageField(upload_to=None, height_field=None, width_field=None, max_length=100, null=True,
+                               blank=True)
     PostedDate = models.DateField(blank=True, null=True)
     reward = models.CharField(max_length=100, null=True, blank=True)
     ClosingDate = models.DateField(blank=True, null=True)

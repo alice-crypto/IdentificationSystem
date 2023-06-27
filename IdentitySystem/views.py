@@ -1,12 +1,14 @@
 from django.contrib.auth import logout
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from django.db.models import Q
 from .models import IdentityCard, Person, Authority, Region, Department, Borough, User, WantedPoster, Commissariat
 from .serializers import IdentityCardSerializer, PersonSerializer, AuthoritySerializer, RegionSerializer, \
     DepartmentSerializer, BoroughSerializer, UserSerializer, LoginSerializer, WantedPosterSerializer, \
@@ -58,14 +60,36 @@ class BoroughByDepartmentViewSet(viewsets.ReadOnlyModelViewSet):
         return Borough.objects.filter(fk_department_id=department_id)
 
 
+class SearchIdentityCardViewSet(viewsets.ModelViewSet):
+    serializer_class = IdentityCardSerializer
+
+    def get_queryset(self):
+        input_string = self.kwargs.get('input_string')
+        identity_cards = self.search_by_name_or_surname(input_string)
+        serializer = self.get_serializer(identity_cards, many=True)
+        return Response(serializer.data)
+
+    def search_by_name_or_surname(self, input_string):
+        identity_cards = IdentityCard.objects.filter(
+            Q(given_name__icontains=input_string) | Q(surname__icontains=input_string)
+        )
+        return identity_cards
+
+
 class IdentityCardViewSet(viewsets.ModelViewSet):
     queryset = IdentityCard.objects.all()
     serializer_class = IdentityCardSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['gender', 'isActive', 'PostedDate']
+    search_fields = ['surname', 'given_name']
 
 
 class WantedPosterViewSet(viewsets.ModelViewSet):
     queryset = WantedPoster.objects.all()
     serializer_class = WantedPosterSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['gender', 'isActive', 'PostedDate']
+    search_fields = ['surname', 'given_name']
 
 
 class IdentityCardByAuthorityViewSet(viewsets.ReadOnlyModelViewSet):
@@ -95,7 +119,7 @@ class WantedPosterByCommissariatViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         commissariat_id = self.kwargs.get('commissariat_id')
         if commissariat_id is None:
-            return Response({'msg': "Need authority Id"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg': "Need commissariat Id"}, status=status.HTTP_400_BAD_REQUEST)
         return Commissariat.objects.filter(fk_authority_id=commissariat_id)
 
 
