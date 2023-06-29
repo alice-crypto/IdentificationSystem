@@ -23,7 +23,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build
-        run: python manage.py runserver
+        run: pylint IdentificationSystem
       - name: Send email notification on failure
         if: ${{ failure() }}
         env:
