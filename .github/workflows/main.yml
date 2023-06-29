@@ -23,7 +23,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build
-        run: python manage.py Runserver
+        run: python manage.py runserver
       - name: Send email notification on failure
         if: ${{ failure() }}
         env:
