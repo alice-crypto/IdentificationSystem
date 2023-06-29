@@ -1,0 +1,41 @@
+name: Django REST Build and Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build
+        run: python manage.py Build
+      - name: Send email notification on failure
+        if: ${{ failure() }}
+        env:
+          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: |
+          echo "Build failed" | mail -s "Build Failed" -a "From: ${{ secrets.EMAIL_USERNAME }}" yalakouam@gmail.com
+
+      - name: Send email notification on success
+        if: ${{ success() }}
+        env:
+          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: |
+          echo "Build successful" | mail -s "Build Successful" -a "From: ${{ secrets.EMAIL_USERNAME }}" yalakouam@gmail.com
