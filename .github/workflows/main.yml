@@ -23,7 +23,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build
-        run: pylint IdentificationSystem
+        run: flake8
       - name: Send email notification on failure
         if: ${{ failure() }}
         env:
